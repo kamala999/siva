@@ -5,6 +5,13 @@ pipeline {
   }
  
   stages {
+    stage('create S3 bucket') {
+      steps {
+        script {
+            createS3bucket('s3://jenkins-ansible-terraform-git-intigration-27')
+        }
+      }
+    }
     stage('terraform init & apply -dev') {
       steps {
         sh returnStatus: true, script: 'terraform workspace new dev'
@@ -25,4 +32,7 @@ pipeline {
 def getTerraformPath() {
   def tfHome = tool name: 'terraform-server', type: 'terraform'
   return tfHome
+}
+def createS3bucket(bucketName) {
+  sh returnStatus: true, script: 'aws s3 mb ${bucketName} --region ap-south-1'
 }
