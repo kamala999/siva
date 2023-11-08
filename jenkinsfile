@@ -39,5 +39,6 @@ def getTerraformPath() {
 }
 
 def createS3bucket(bucketName) {
-  sh "aws s3 mb ${bucketName} --region ap-south-1"
+  //sh "aws s3 mb ${bucketName} --region ap-south-1"
+  aws s3 mb jenkins-ansible-terraform-git-instigration-27 --region ap-south-1
 }
