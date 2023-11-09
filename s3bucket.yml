@@ -3,5 +3,6 @@
   tasks:
     - name: create S3 bucket
       aws_s3:
-        name: jenkins-ansible-terraform-git-integration-28
-        state: present
+        bucket: jenkins-ansible-terraform-git-integration-28  # Specify the bucket name
+        mode: create  # Use 'create' to create the bucket
+
