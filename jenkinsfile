@@ -1,39 +1,40 @@
 pipeline {
-  agent any
-  environment {
-    PATH = "${PATH}:${getTerraformPath()}"
-  }
- 
-  stages {
-    stage('create S3 bucket') {
-      steps {
-        script {
-            createS3bucket('s3://jenkins-ansible-terraform-git-intigration-27')
+    agent any
+    environment {
+        PATH = "${PATH}:${getTerraformPath()}"
+    }
+
+    stages {
+        stage('Create S3 bucket') {
+            steps {
+                script {
+                    def s3BucketName = 'jenkins-ansible-terraform-git-integration-27'
+                    createS3bucket(s3BucketName)
+                }
+            }
         }
-      }
+        stage('Terraform init & apply -dev') {
+            steps {
+                sh returnStatus: true, script: 'terraform workspace select dev || terraform workspace new dev'
+                sh 'terraform init'
+                sh 'terraform apply --auto-approve'
+            }
+        }
+        stage('Terraform init & apply -prod') {
+            steps {
+                sh returnStatus: true, script: 'terraform workspace select prod || terraform workspace new prod'
+                sh 'terraform init'
+                sh 'terraform apply --auto-approve'
+            }
+        }
     }
-    stage('terraform init & apply -dev') {
-      steps {
-        sh returnStatus: true, script: 'terraform workspace new dev'
-        sh 'terraform init'
-        sh 'terraform destroy --auto-approve'
-      }
-    }
-     stage('terraform init & apply -prod') {
-      steps {
-        sh returnStatus: true, script: 'terraform workspace new prod'
-        sh 'terraform init'
-        sh 'terraform destroy --auto-approve'
-      }
-    }
-  }
 }
 
 def getTerraformPath() {
-  def tfHome = tool name: 'terraform-server', type: 'terraform'
-  return tfHome
-}
-def createS3bucket(bucketName) {
-  sh returnStatus: true, script: 'aws s3 mb ${bucketName} --region ap-south-1'
+    def tfHome = tool name: 'terraform-server', type: 'terraform'
+    return tfHome
 }
 
+def createS3bucket(bucketName) {
+    sh returnStatus: true, script: "aws s3 mb s3://${bucketName} --region ap-south-1"
+}
