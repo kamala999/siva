@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  tasks:
+    - name: create S3 bucket
+      aws_s3:
+        name: jenkins-ansible-terraform-git-integration-28
+        state: present
