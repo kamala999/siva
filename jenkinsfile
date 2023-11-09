@@ -7,10 +7,7 @@ pipeline {
     stages {
         stage('Create S3 bucket') {
             steps {
-                script {
-                    def s3BucketName = 'jenkins-ansible-terraform-git-integration-27'
-                    createS3bucket(s3BucketName)
-                }
+               sh 'ansible-playbook s3bucket.yml'
             }
         }
         stage('Terraform init & apply -dev') {
